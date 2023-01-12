@@ -1,5 +1,7 @@
 from tkinter import *
+from tkinter import ttk
 import pandas as pd
+from .PriceEST.ipynb import  CarPriceEstimator
 # window attributes
 window = Tk()
 window.title("PriceMatch")
@@ -11,28 +13,21 @@ window.configure(background = "gray")
 
 data = pd.read_csv("D:\\Downloads\\car_price_prediction.csv")
 data = data.drop_duplicates()
-data = data[data.Manufacturer.str.match('^[A-Za-z]+$')]
+#data = data[data.Manufacturer.str.match('^[A-Za-z]+$')]
 data = data.groupby('Manufacturer')['Model'].apply(lambda x: x.unique().tolist()).reset_index()
 
 print(data)
 
-def on_manufacturer_select(event):
-    selected_manufacturer = manufacturer_var.get()
-    models = data[data['Manufacturer'] == selected_manufacturer]['Model'].values[0]
-    model_var.set(models[0])
-    model_combobox['values'] = models
 
 
-# the manufacturer dataframe:
-manufacturer_options= ["LEXUS", "CHEVROLET","GREATWALL","HONDA","FORD","HYUNDAI","TOYOTA",
-                                                     "MERCEDES-BENZ", "OPEL","PORSCHE","BMW","JEEP","VOLKSWAGEN","AUDI",
-                                                     "RENAULT", "NISSAN","SUBARU","DAEWOO","KIA","MITSUBIS","SSANGYONG",
-                                                     "MAZDA", "GMC","FIAT","INFINITI","ALFA ROMEO","SUZUKI","ACURA",
-                                                     "LINCOLN", "VAZ","GAZ","CITROEN","LAND ROVER","MINI","DODGE",
-                                                     "CHRYSLER", "JAGUAR","ISUZU","SKODA","DAIHATSU","BUICK","TESLA",
-                                                     "CADILLAC", "PEUGEOT","BENTLEY","VOLVO","HAVAL","HUMMER","SCION",
-                                                     "UAZ", "MERCURY","ZAZ","ROVER","SEAT","LANCIA","MOSKVICH",
-                                                     "MASERATI", "FERRARI","SAAB","LAMBORGHINI","PONTIAC","SATURN","ASTON MARTIN"]
+
+# the manufacturer list of items:
+manufacturer_options= ["ACURA","ALFA ROMEO","ASTON MARTIN","AUDI","BENTLEY","BMW","BUICK","CADILLAC","CHEVROLET","CHRYSLER","CITROEN",
+"DAEWOO","DAIHATSU","DODGE","FERRARI","FIAT","FORD","GAZ","GMC","GREATWALL","HAVAL","HONDA","HUMMER"
+,"HYUNDAI","INFINITI","ISUZU","JAGUAR","JEEP","KIA","LAMBORGHINI","LANCIA","LAND ROVER",
+"LEXUS","LINCOLN","MASERATI","MAZDA","MERCEDES-BENZ","MERCURY","MINI","MITSUBIS","MOSKVICH","NISSAN",
+"OPEL","PEUGEOT","PONTIAC","PORSCHE","RENAULT","ROVER","SAAB","SATURN","SCION","SEAT","SKODA","SSANGYONG",
+"SUBARU","SUZUKI","TESLA","TOYOTA","UAZ","VAZ","VOLKSWAGEN","VOLVO","ZAZ"]
 
 # list for different catogaries
 catagory_options = ["Jeep", "Hatchback","Sedan","Microbus","Goods wagon","Universal","Coupe",
@@ -51,9 +46,6 @@ gear_box_options = ['Automatic', 'Tiptronic','Variator', 'Manual']
 fuel_type_options = ["Hybrid", "Petrol","Diesel","CNG","Plug-in Hybrid","LPG","Hydrogen"]
 
 
-
-
-
 # the string vars that are used to save data from the form
 manufactuer_var= StringVar()
 model_var= StringVar()
@@ -68,11 +60,8 @@ driveWheels_var = StringVar()
 doorsNumber_var = StringVar()
 airbags_var = StringVar()
 
-
-
 # data labels 
 manufacturer = Label(window ,text = "car manufacturer").grid(row = 0,column = 0)
-#model = Label(window ,text = "Model").grid(row = 1,column = 0)
 prduction_year = Label(window, text = "production year").grid(row = 2,column = 0)
 catagory = Label(window ,text = "catagory").grid(row = 3,column = 0)
 Leather_interior = Label(window ,text = "Leather interior").grid(row = 4,column = 0)
@@ -84,17 +73,26 @@ driveWheels= Label(window ,text = "Drive wheels").grid(row = 9,column = 0)
 doorsNumber= Label(window ,text = "number of doors").grid(row = 10,column = 0)
 airbags= Label(window ,text = "airbags").grid(row = 11,column = 0)
 
-
-# setting the display option
+# setting the display options
 manufactuer_var.set(manufacturer_options[0])
 catagory_var.set(catagory_options[0])
 driveWheels_var.set(driveWheels_options[0])
 Leather_interior_var.set(leather_interior_options[1])
 gear_box_var.set(gear_box_options[0])
 fuel_type_var.set(fuel_type_options[0])
+
+# function to set the data displayed in the models feild based on
+# the uesr input in the manufacturer feild
+def on_manufacturer_select(event):
+    selected_manufacturer = manufactuer_var.get()
+    models = data[data['Manufacturer'] == selected_manufacturer]['Model'].values[0]
+    model_var.set(models[0])
+    model_entry = OptionMenu(window, model_var,  *models).grid(row = 1,column = 1)
+    model = Label(window ,text = "Model").grid(row = 1,column = 0)
+
+
 # data entry forms
-manufactuer_dropDown = OptionMenu(window , manufactuer_var, *manufacturer_options).grid(row = 0,column = 1)
-#model_entry = Entry(window, textvariable= model_var).grid(row = 1,column = 1)
+manufactuer_dropDown = OptionMenu(window , manufactuer_var, *manufacturer_options, command= on_manufacturer_select).grid(row = 0,column = 1)
 production_year_entry = Entry(window, textvariable= production_year_var).grid(row = 2,column = 1)
 catagory_dropDown = OptionMenu(window , catagory_var, *catagory_options).grid(row = 3,column = 1)
 Leather_interior_entry = OptionMenu(window,  Leather_interior_var, *leather_interior_options).grid(row = 4,column = 1)
@@ -108,14 +106,7 @@ airbags= Entry(window, textvariable= airbags_var).grid(row = 11,column = 1)
 
 # function to define the contentes of the model feild
 
-def on_manufacturer_select():
-    selected_manufacturer = manufactuer_var.get()
-    models = data[data['Manufacturer'] == selected_manufacturer]['Model'].values[0]
-    model_var.set(models[0])
-    #model = Label(window ,text = "Model").grid(row = 1,column = 0)
-    #model_entry = Entry(window, textvariable= model_var).grid(row = 1,column = 1)
-    model_entry = OptionMenu(window, model_var,  *models).grid(row = 1,column = 1)
-model = Label(window ,text = "Model").grid(row = 1,column = 0)
+
 
 
 # submit function, takes data from the vars and saves them to variables
@@ -141,6 +132,23 @@ def submit():
      Leather_interior_data, fuel_type_data, milage_data, cylinders_data, gear_box_data, driveWheels_data, doorsNumber_data, airbags_data]
 
     print(' '.join(map(str, list)))
-sub_btn=Button(window,text = 'submit featuers', command = on_manufacturer_select).grid(row=13,column=0)
-sub_btn=Button(window,text = 'Display model', command = submit).grid(row=12,column=0)
+
+def reset():
+    manufactuer_var.set("")
+    model_var.set("")
+    production_year_var.set("")
+    catagory_var.set("")
+    Leather_interior_var.set("")
+    fuel_type_var.set("")
+    milage_var.set("")
+    cylinders_var.set("")
+    gear_box_var.set("")
+    driveWheels_var.set("")
+    doorsNumber_var.set("")
+    airbags_var.set("")
+
+
+sub_btn=Button(window,text = 'submit featuers', command = submit).grid(row=12,column=1)
+sub_btn=Button(window,text = 'Reset', command = reset).grid(row=12,column=0)
+
 window.mainloop()
