@@ -1,5 +1,4 @@
 from tkinter import *
-
 import pandas as pd
 # window attributes
 window = Tk()
@@ -15,13 +14,13 @@ data = data.drop_duplicates()
 data = data[data.Manufacturer.str.match('^[A-Za-z]+$')]
 data = data.groupby('Manufacturer')['Model'].apply(lambda x: x.unique().tolist()).reset_index()
 
-#print(data)
+print(data)
 
-#def on_manufacturer_select(event):
-    #selected_manufacturer = manufacturer_var.get()
-    #models = data[data['Manufacturer'] == selected_manufacturer]['Model'].values[0]
-    #model_var.set(models[0])
-    #model_combobox['values'] = models
+def on_manufacturer_select(event):
+    selected_manufacturer = manufacturer_var.get()
+    models = data[data['Manufacturer'] == selected_manufacturer]['Model'].values[0]
+    model_var.set(models[0])
+    model_combobox['values'] = models
 
 
 # the manufacturer dataframe:
@@ -73,7 +72,7 @@ airbags_var = StringVar()
 
 # data labels 
 manufacturer = Label(window ,text = "car manufacturer").grid(row = 0,column = 0)
-model = Label(window ,text = "Model").grid(row = 1,column = 0)
+#model = Label(window ,text = "Model").grid(row = 1,column = 0)
 prduction_year = Label(window, text = "production year").grid(row = 2,column = 0)
 catagory = Label(window ,text = "catagory").grid(row = 3,column = 0)
 Leather_interior = Label(window ,text = "Leather interior").grid(row = 4,column = 0)
@@ -95,7 +94,7 @@ gear_box_var.set(gear_box_options[0])
 fuel_type_var.set(fuel_type_options[0])
 # data entry forms
 manufactuer_dropDown = OptionMenu(window , manufactuer_var, *manufacturer_options).grid(row = 0,column = 1)
-model_entry = Entry(window, textvariable= model_var).grid(row = 1,column = 1)
+#model_entry = Entry(window, textvariable= model_var).grid(row = 1,column = 1)
 production_year_entry = Entry(window, textvariable= production_year_var).grid(row = 2,column = 1)
 catagory_dropDown = OptionMenu(window , catagory_var, *catagory_options).grid(row = 3,column = 1)
 Leather_interior_entry = OptionMenu(window,  Leather_interior_var, *leather_interior_options).grid(row = 4,column = 1)
@@ -106,6 +105,18 @@ gear_box_entry= OptionMenu(window, gear_box_var, *gear_box_options).grid(row = 8
 driveWheels_entry= OptionMenu(window, driveWheels_var, *driveWheels_options).grid(row = 9,column = 1)
 doorsNumber= Entry(window, textvariable= doorsNumber_var).grid(row = 10,column = 1)
 airbags= Entry(window, textvariable= airbags_var).grid(row = 11,column = 1)
+
+# function to define the contentes of the model feild
+
+def on_manufacturer_select():
+    selected_manufacturer = manufactuer_var.get()
+    models = data[data['Manufacturer'] == selected_manufacturer]['Model'].values[0]
+    model_var.set(models[0])
+    #model = Label(window ,text = "Model").grid(row = 1,column = 0)
+    #model_entry = Entry(window, textvariable= model_var).grid(row = 1,column = 1)
+    model_entry = OptionMenu(window, model_var,  *models).grid(row = 1,column = 1)
+model = Label(window ,text = "Model").grid(row = 1,column = 0)
+
 
 # submit function, takes data from the vars and saves them to variables
 
@@ -123,13 +134,13 @@ def submit():
     doorsNumber_data = doorsNumber_var.get()
     airbags_data = airbags_var.get()
 
+    
+
 # saving the data into a list from teh 
     list= [manufacturer_data, model_data, production_year_data, catagory_data,
      Leather_interior_data, fuel_type_data, milage_data, cylinders_data, gear_box_data, driveWheels_data, doorsNumber_data, airbags_data]
 
     print(' '.join(map(str, list)))
-     
-sub_btn=Button(window,text = 'submit featuers', command = submit).grid(row=12,column=0)
-
-
+sub_btn=Button(window,text = 'submit featuers', command = on_manufacturer_select).grid(row=13,column=0)
+sub_btn=Button(window,text = 'Display model', command = submit).grid(row=12,column=0)
 window.mainloop()
