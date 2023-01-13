@@ -19,11 +19,8 @@ data = pd.read_csv(
     "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
     encoding='iso-8859-1')
 
-
-
 # drop rows where the price is less than 500
 data = data[data['price'] >= 500]
-
 
 # # Drop the totalPrice column
 # data['doornumber'] = data['doornumber'].replace({'four':'4','two':'2'}, regex=True)
@@ -52,8 +49,6 @@ if 'Model ' in data.columns:
     data = data.drop('Model ', axis=1)
 else:
     print("Model  column not found")
-
-
 
 # data
 
@@ -167,6 +162,7 @@ plt.show()
 
 # VERSION 1
 
+
 # VERSION 2
 def preprocessing_data(df):
 
@@ -174,19 +170,17 @@ def preprocessing_data(df):
         "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
         encoding='iso-8859-1')
 
+    data2 = data2[data2['price'] >= 500]
 
-    data2 = data2[data2['price'] >= 500]    
-
-    if 'Manufacturer' in data.columns:
+    if 'Manufacturer' in data2.columns:
         data2 = data2.drop('Manufacturer', axis=1)
     else:
         print("Manufacturer column not found")
 
-    if 'Model ' in data.columns:
+    if 'Model ' in data2.columns:
         data2 = data2.drop('Model ', axis=1)
     else:
-        print("Model  column not found")
-
+        print("Model column not found")
 
     data2 = data2[:-1]
     data2 = data2.append(df)
@@ -212,12 +206,9 @@ def preprocessing_data(df):
     print("preprocessign check")
 
     main_array = main_array[:, 2:]
-    X_main = main_array[:, :-1]
-    X_main = X_main[:, :-1]
+    #X_main = main_array[:, :-1]
 
-    
-
-    predict_price(X_main)
+    predict_price(main_array)
 
 
 # predict_data = main_array[PREDICT_ROW, :].reshape(1, -1)
@@ -238,10 +229,6 @@ def predict_price(df):
     X_predict = predict_data[:, :-1]
     y_true = predict_data[:, -1]
 
-    # xScaler = StandardScaler()
-    # yScaler = StandardScaler()
-
-
     predict_data_scaled = xScaler.transform(X_predict)
     y_pred_scaled = model.predict(predict_data_scaled)
     y_pred = yScaler.inverse_transform(y_pred_scaled)
@@ -250,4 +237,41 @@ def predict_price(df):
     print("Percentage error: {}".format(
         str(float(abs(y_true - y_pred) * 100 / y_true))))
 
-    # return y_pred
+
+#def predict_price_two(df, model, xScaler, yScaler):
+# Preprocess the data
+#data = df.copy()
+#data = data[data['price'] >= 500]
+# data = data.drop(['Manufacturer', 'Model'], axis=1)
+# categorical_cols = [
+#    'symboling', 'Fuel type', 'aspiration', 'doornumber', 'Category',
+#    'Drive wheels', 'enginelocation', 'enginetype', 'Cylinders',
+#    'fuelsystem'
+# ]
+#main_array = np.array(data['car_ID']).reshape(-1, 1)
+
+#for col in data.columns:
+#    if col in categorical_cols:
+#        temp = np.array(pd.get_dummies(data[col]))
+#    else:
+#        temp = np.array(data[col]).reshape(-1, 1)
+#    main_array = np.hstack((main_array, temp))
+
+#main_array = main_array[:, 2:]
+# X = main_array[:, :-1]
+# y = main_array[:, -1].reshape(-1, 1)
+
+# Scale the data
+# X_scaled = xScaler.transform(X)
+# y_scaled = yScaler.transform(y)
+
+# Make a prediction using the model
+# predict_data = X_scaled[-1, :].reshape(1, -1)
+# X_predict = predict_data[:, :-1]
+#y_true = predict_data[:, -1]
+# y_pred_scaled = model.predict(X_predict)
+# y_pred = yScaler.inverse_transform(y_pred_scaled)
+# print("Prediction price result: {}".format(float(y_pred)))
+#print("True price: {}".format(float(y_true)))
+# print("Percentage error: {}".format(
+#    str(float(abs(y_true - y_pred) * 100 / y_true))))

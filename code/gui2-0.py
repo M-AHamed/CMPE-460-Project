@@ -3,6 +3,7 @@ from tkinter import ttk
 import pandas as pd
 import numpy as np
 from NeuralNetwork1 import preprocessing_data
+#from NeuralNetwork1 import predict_price_two_caller
 # window attributes
 window = Tk()
 window.title("PriceMatch")
@@ -172,7 +173,7 @@ def submit():
     peakrpm = 5000
     citympg = 24
     highway_mpg = 28
-    price = 100
+    price = 600
 
     list = [[car_id], [symboling], [fuel_type_data], [aspiration_data],
             [doorsNumber_data], [catagory_data], [driveWheels_data],
@@ -185,11 +186,10 @@ def submit():
     data.columns = [
         'car_ID', 'symboling', 'Fuel type', 'aspiration', 'doornumber',
         'Category', 'Drive wheels', 'enginelocation', 'wheelbase', 'carlength',
-        'carwidth', 'carheight', 'carweight', 'enginetype', 'Cylinders',
+        'carwidth', 'carheight', 'curbweight', 'enginetype', 'Cylinders',
         'enginesize', 'fuelsystem', 'boreratio', 'stroke', 'compressionratio',
         'horsepower', 'peakrpm', 'citympg', 'highwaympg', 'price'
     ]
-
     print(data)
 
     preprocessing_data(data)
