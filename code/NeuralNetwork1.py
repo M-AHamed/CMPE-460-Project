@@ -22,24 +22,6 @@ data = pd.read_csv(
 # drop rows where the price is less than 500
 data = data[data['price'] >= 500]
 
-# # Drop the totalPrice column
-# data['doornumber'] = data['doornumber'].replace({'four':'4','two':'2'}, regex=True)
-# # Drop rows with missing or empty values in the "Doors" column
-# data = data[data['doornumber'].str.strip() !='']
-# data['doornumber'] = data['doornumber'].astype(int)
-
-# def check_missing_values(dataframe):
-#     missing_values = dataframe.isnull().any()
-#     if missing_values.any():
-#         print("Missing values in columns:")
-#         print(missing_values[missing_values == True])
-#     else:
-#         print("No missing values.")
-
-# check_missing_values(data)
-
-# data
-
 if 'Manufacturer' in data.columns:
     data = data.drop('Manufacturer', axis=1)
 else:
@@ -203,28 +185,18 @@ def preprocessing_data(df):
             temp = np.array(data2[col]).reshape(-1, 1)
         # Stack the column with the main array
         main_array = np.hstack((main_array, temp))
-    print("preprocessign check")
+    print("preprocessing check")
 
     main_array = main_array[:, 2:]
-    #X_main = main_array[:, :-1]
+   # X_main = main_array[:, :-1]
 
     predict_price(main_array)
-
-
-# predict_data = main_array[PREDICT_ROW, :].reshape(1, -1)
-# print(main_array)
-# X_predict = predict_data[:, :-1]
-# y_true = predict_data[:, -1]
 
 
 # preprocess the gui data to run it through the model
 def predict_price(df):
 
     predict_data = df[-1, :].reshape(1, -1)
-
-    # last_row = df.iloc[-1]
-    # print(last_row)
-
     print(df)
     X_predict = predict_data[:, :-1]
     y_true = predict_data[:, -1]

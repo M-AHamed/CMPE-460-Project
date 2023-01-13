@@ -173,7 +173,7 @@ def submit():
     peakrpm = 5000
     citympg = 24
     highway_mpg = 28
-    price = 600
+    price = 600.0
 
     list = [[car_id], [symboling], [fuel_type_data], [aspiration_data],
             [doorsNumber_data], [catagory_data], [driveWheels_data],
@@ -203,6 +203,8 @@ def reset():
     cylinders_var.set("")
     driveWheels_var.set("")
     doorsNumber_var.set("")
+    engineType_var.set("")
+    aspiration_var.set("")
 
 
 sub_btn = Button(window, text='submit featuers', command=submit).grid(row=14,
