@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 import pandas as pd
-
+from NeuralNetwork1 import predict_price
 # window attributes
 window = Tk()
 window.title("PriceMatch")
@@ -159,10 +159,13 @@ def submit():
 
 
 # saving the data into a list from teh
-    list = [manufacturer_data, model_data, catagory_data,
-            fuel_type_data, cylinders_data, driveWheels_data, doorsNumber_data, aspiration_data, engine_type]
-
+    list = [fuel_type_data, aspiration_data,doorsNumber_data, catagory_data,
+             cylinders_data, driveWheels_data, engine_type]
     print(' '.join(map(str, list)))
+
+    prediction = predict_price(list)
+    print(prediction)
+
 
 
 def reset():
@@ -173,6 +176,7 @@ def reset():
     cylinders_var.set("")
     driveWheels_var.set("")
     doorsNumber_var.set("")
+
 
 
 sub_btn = Button(window, text='submit featuers',
