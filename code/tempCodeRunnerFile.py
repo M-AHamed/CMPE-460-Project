@@ -1,1 +1,1 @@
-hello
+manufactuer_var
