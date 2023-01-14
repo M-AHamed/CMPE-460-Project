@@ -2,8 +2,9 @@ from tkinter import *
 from tkinter import ttk
 import pandas as pd
 import numpy as np
-import pickle
-#from NeuralNetwork1 import predict_price_two_caller
+from tensorflow.keras.models import model_from_json
+from sklearn.preprocessing import StandardScaler
+
 # window attributes
 window = Tk()
 window.title("PriceMatch")
@@ -183,9 +184,8 @@ def submit():
         'enginesize', 'fuelsystem', 'boreratio', 'stroke', 'compressionratio',
         'horsepower', 'peakrpm', 'citympg', 'highwaympg', 'price'
     ]
-    #from prediction import preprocessing_data
-    #preprocessing_data(data)
-
+    #from Working_pyNN import preprocessing_data
+    preprocessing_data(data)
 
 
 def reset():
@@ -198,6 +198,160 @@ def reset():
     doorsNumber_var.set("")
     engineType_var.set("")
     aspiration_var.set("")
+
+
+def import_model(df, returnedList):
+    with open("model.json", "r") as file:
+        model_json = file.read()
+    loaded_model = model_from_json(model_json)
+    loaded_model.load_weights("weights.h5")
+    loaded_model.predict(df)
+    #predict_data = df[-1, :].reshape(1, -1)
+    #print(df)
+    #X_predict = predict_data[:, :-1]
+    #y_true = predict_data[:, -1]
+
+    #predict_data_scaled = xScaler.transform(X_predict)
+
+
+def preprocessing_data(df):
+    returnedList = predict_helper()
+    main_array = returnedList[2]
+    xScaler = returnedList[0]
+    yScaler = returnedList[1]
+    # reading data for the second dataframe from a csv file
+    data2 = pd.read_csv(
+        "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
+        encoding='iso-8859-1')
+    data2 = data2[data2['price'] >= 500]
+    # checking that the data dosent contain manufacturer, and model
+    if 'Manufacturer' in data2.columns:
+        data2 = data2.drop('Manufacturer', axis=1)
+    else:
+        print("Manufacturer column not found")
+
+    if 'Model ' in data2.columns:
+        data2 = data2.drop('Model ', axis=1)
+    else:
+        print("Model column not found")
+    # dropping the last row, and replacing it with df
+    # so we can recreate the number of entries with one-hot-encoding
+    data2 = data2[:-1]
+    data2 = data2.append(df)
+
+    # Define the list of categorical columns
+    categorical_cols = [
+        'symboling', 'Fuel type', 'aspiration', 'doornumber', 'Category',
+        'Drive wheels', 'enginelocation', 'enginetype', 'Cylinders',
+        'fuelsystem'
+    ]
+    # Create the main array with car_ID column
+    main_array1 = np.array(data2['car_ID']).reshape(-1, 1)
+
+    # Iterate through columns in the dataframe
+    for col in data2.columns:
+        # Check if the column is in the list of categorical columns
+        if col in categorical_cols:
+            # Perform one-hot encoding on the column
+            temp = np.array(pd.get_dummies(data2[col]))
+        else:
+            # Otherwise, reshape the column
+            temp = np.array(data2[col]).reshape(-1, 1)
+
+    # Stack the column with the main array
+    main_array1 = np.hstack((main_array1, temp))
+
+    # Remove the car_ID column
+    main_array1 = main_array1[:, 2:]
+
+    # Display the array as a dataframe
+    # pd.DataFrame(main_array1)
+    main_array1 = pd.DataFrame(main_array1)
+    main_array1 = main_array1.astype(float)
+    pd.DataFrame(main_array1)
+    pd.DataFrame(main_array)
+    main_array = main_array[:-1]
+    main_array = np.vstack((main_array, main_array1.tail(1)))
+    pd.DataFrame(main_array)
+    predict_data = df[-1, :].reshape(1, -1)
+    X_predict = predict_data[:, :-1]
+    y_true = predict_data[:, -1]
+
+    predict_data_scaled = xScaler.transform(X_predict)
+    #y_pred_scaled = model.predict(predict_data_scaled)
+    #y_pred = yScaler.inverse_transform(y_pred_scaled)
+    #print("Prediction price result: {}".format(float(y_pred)))
+    #print("True price: {}".format(float(y_true)))
+    #print("Percentage error: {}".format(
+    #    str(float(abs(y_true - y_pred) * 100 / y_true))))
+    import_model(predict_data_scaled, returnedList)
+
+
+def predict_helper():
+    data = pd.read_csv(
+        "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
+        encoding='iso-8859-1')
+
+    # drop rows where the price is less than 500
+    data = data[data['price'] >= 500]
+
+    missing_values = data.isnull().any()
+    if missing_values.any():
+        print("Missing values in columns:")
+        print(missing_values[missing_values == True])
+    else:
+        print("No missing values.")
+
+    if 'Manufacturer' in data.columns:
+        data = data.drop('Manufacturer', axis=1)
+    else:
+        print("Manufacturer column not found")
+
+    if 'Model ' in data.columns:
+        data = data.drop('Model ', axis=1)
+    else:
+        print("Model  column not found")
+    data
+    # Define the list of categorical columns
+    categorical_cols = [
+        'symboling', 'Fuel type', 'aspiration', 'doornumber', 'Category',
+        'Drive wheels', 'enginelocation', 'enginetype', 'Cylinders',
+        'fuelsystem'
+    ]
+    # Create the main array with car_ID column
+    main_array = np.array(data['car_ID']).reshape(-1, 1)
+    # Iterate through columns in the dataframe
+    for col in data.columns:
+        # Check if the column is in the list of categorical columns
+        if col in categorical_cols:
+            # Perform one-hot encoding on the column
+            temp = np.array(pd.get_dummies(data[col]))
+        else:
+            # Otherwise, reshape the column
+            temp = np.array(data[col]).reshape(-1, 1)
+    # Stack the column with the main array
+        main_array = np.hstack((main_array, temp))
+    # Remove the car_ID column
+    main_array = main_array[:, 2:]
+    # Display the array as a dataframe
+    pd.DataFrame(main_array)
+    # Define the features and labels
+    X = main_array[:, :-1]
+    y = main_array[:, -1].reshape(-1, 1)
+
+    for i, val in enumerate(X):
+        for j, value in enumerate(val):
+            if isinstance(value, str):
+                print("string value found in X at index [{}, {}]: {}".format(
+                    i, j, value))
+
+    xScaler = StandardScaler()
+    yScaler = StandardScaler()
+    X_scaled = xScaler.fit_transform(X)
+    Y_scaled = yScaler.fit_transform(y)
+    listReturned = [xScaler, yScaler, main_array]
+
+    return listReturned
 
 
 sub_btn = Button(window, text='submit featuers', command=submit).grid(row=14,
