@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 import pandas as pd
 import numpy as np
-from NeuralNetwork1 import preprocessing_data
+import pickle
 #from NeuralNetwork1 import predict_price_two_caller
 # window attributes
 window = Tk()
@@ -10,61 +10,53 @@ window.title("PriceMatch")
 window.geometry('320x360')
 
 window.configure(background="#5A5A5A")
-
-data1 = pd.read_csv(
+guiData1 = pd.read_csv(
     "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
     encoding='latin1')
 
-data = pd.read_csv(
+guiData = pd.read_csv(
     "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
     encoding='latin1')
 
-data = data.groupby('Manufacturer')['Model '].apply(
+guiData = guiData.groupby('Manufacturer')['Model '].apply(
     lambda x: x.unique().tolist()).reset_index()
 
 # store the different manufacturers from the dataframe into a list
-manufacturer_options = data['Manufacturer']
+manufacturer_options = guiData['Manufacturer']
 # display the first item in the list in the drop-down menu
 manufactuer_var = manufacturer_options[0]
 
 # clean the data to store it into the different drop down menus
+guiData1Category = guiData1.drop_duplicates(subset=['Category'])
+guiData1DriveWheels = guiData1.drop_duplicates(subset=['Drive wheels'])
+guiData1FuelType = guiData1.drop_duplicates(subset=['Fuel type'])
+guiData1DoorsNumber = guiData1.drop_duplicates(subset=['doornumber'])
+guiData1NumberOfCylinders = guiData1.drop_duplicates(subset=['Cylinders'])
+guiData1Aspiration = guiData1.drop_duplicates(subset=['aspiration'])
+guiData1EngineType = guiData1.drop_duplicates(subset=['enginetype'])
 
-data1Category = data1.drop_duplicates(subset=['Category'])
-
-data1DriveWheels = data1.drop_duplicates(subset=['Drive wheels'])
-
-data1FuelType = data1.drop_duplicates(subset=['Fuel type'])
-
-data1DoorsNumber = data1.drop_duplicates(subset=['doornumber'])
-
-data1NumberOfCylinders = data1.drop_duplicates(subset=['Cylinders'])
-
-data1Aspiration = data1.drop_duplicates(subset=['aspiration'])
-
-data1EngineType = data1.drop_duplicates(subset=['enginetype'])
-
-catagory_options = data1Category['Category']
+catagory_options = guiData1Category['Category']
 catagory_var = catagory_options[0]
 # list for different drive wheels options Drive wheels
-driveWheels_options = data1DriveWheels['Drive wheels']
+driveWheels_options = guiData1DriveWheels['Drive wheels']
 
 # list for different fuel types
-fuel_type_options = data1FuelType['Fuel type']
+fuel_type_options = guiData1FuelType['Fuel type']
 fuel_type_var = fuel_type_options[0]
 
 # list for possible door numbers
 
-doorsNumber_options = data1DoorsNumber['doornumber']
+doorsNumber_options = guiData1DoorsNumber['doornumber']
 
 # list of possible number of cylinders
 
-cylinders_options = data1NumberOfCylinders['Cylinders']
+cylinders_options = guiData1NumberOfCylinders['Cylinders']
 
 # list of possible engine aspirations
-engine_aspiration_options = data1Aspiration['aspiration']
+engine_aspiration_options = guiData1Aspiration['aspiration']
 
 # list of possible engine types
-engine_type_options = data1EngineType['enginetype']
+engine_type_options = guiData1EngineType['enginetype']
 
 # the string vars that are used to save data from the form
 aspiration_var = StringVar()
@@ -105,8 +97,8 @@ engineType_var.set(engine_type_options[0])
 
 def on_manufacturer_select(event):
     selected_manufacturer = manufactuer_var.get()
-    models = data[data['Manufacturer'] ==
-                  selected_manufacturer]['Model '].values[0]
+    models = guiData[guiData['Manufacturer'] ==
+                     selected_manufacturer]['Model '].values[0]
     model_var.set(models[0])
     model_entry = OptionMenu(window, model_var, *models).grid(row=1, column=1)
     model = Label(window, text="Model ").grid(row=1, column=0)
@@ -182,17 +174,18 @@ def submit():
             [engine_size], [fuel_system], [bore_ratio], [stroke],
             [compression], [horesepower], [peakrpm], [citympg], [highway_mpg],
             [price]]
+
     data = pd.DataFrame(list).transpose()
     data.columns = [
         'car_ID', 'symboling', 'Fuel type', 'aspiration', 'doornumber',
-        'Category', 'Drive wheels', 'enginelocation', 'wheelbase', 'carlength',
+        'Category', 'Drive wheels', 'enginelocation', 'wheelbase', 'carlength',
         'carwidth', 'carheight', 'curbweight', 'enginetype', 'Cylinders',
         'enginesize', 'fuelsystem', 'boreratio', 'stroke', 'compressionratio',
         'horsepower', 'peakrpm', 'citympg', 'highwaympg', 'price'
     ]
-    print(data)
+    #from prediction import preprocessing_data
+    #preprocessing_data(data)
 
-    preprocessing_data(data)
 
 
 def reset():

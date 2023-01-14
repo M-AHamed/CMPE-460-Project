@@ -188,7 +188,7 @@ def preprocessing_data(df):
     print("preprocessing check")
 
     main_array = main_array[:, 2:]
-   # X_main = main_array[:, :-1]
+    # X_main = main_array[:, :-1]
 
     predict_price(main_array)
 
