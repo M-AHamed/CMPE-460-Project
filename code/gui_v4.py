@@ -10,9 +10,13 @@ window.title("PriceMatch")
 window.geometry('320x360')
 
 window.configure(background="#5A5A5A")
-guiData1 = pd.read_csv("C:\\Users\\hp\\Desktop\\University\\CMPE 460\\Project_deep\\cars.csv",encoding='iso-8859-1')
+guiData1 = pd.read_csv(
+    "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
+    encoding='iso-8859-1')
 
-guiData = pd.read_csv("C:\\Users\\hp\\Desktop\\University\\CMPE 460\\Project_deep\\cars.csv",encoding='iso-8859-1')
+guiData = pd.read_csv(
+    "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
+    encoding='iso-8859-1')
 
 guiData = guiData.groupby('Manufacturer')['Model '].apply(
     lambda x: x.unique().tolist()).reset_index()
