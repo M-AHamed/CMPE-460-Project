@@ -33,9 +33,11 @@ s.configure(
 font = ("Helvetica", 14)
 # frame attributes:
 frame1 = ttk.Frame(window, width=800, height=600, style='frame1.TFrame')
-frame1.grid()
+frame1.grid(row=0, column=0)
 
-# styling:
+frame2 = ttk.Frame(window)
+frame2.grid(row=1, column=0)
+# datasets input
 guiData1 = pd.read_csv(
     "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
     encoding='iso-8859-1')
@@ -46,7 +48,6 @@ guiData = pd.read_csv(
 
 guiData = guiData.groupby('Manufacturer')['Model '].apply(
     lambda x: x.unique().tolist()).reset_index()
-
 # store the different manufacturers from the dataframe into a list
 manufacturer_options = guiData['Manufacturer']
 # display the first item in the list in the drop-down menu
@@ -121,8 +122,14 @@ engineLocation = ttk.Label(frame1, text="engine Location").grid(row=10,
                                                                 column=0)
 fuelSystem = ttk.Label(frame1, text="Fuel System").grid(row=11, column=0)
 # prediction result:
-prdictionResult = ttk.Label(frame1, text="prediction result:").grid(row=16,
-                                                                    column=0)
+prdictionResult = ttk.Label(frame2,
+                            text=" ",
+                            font=("Helvetica", 12),
+                            background='#F3EFE0',
+                            padding=10,
+                            foreground="#3C2A21").grid(row=0,
+                                                       column=0,
+                                                       columnspan=1)
 
 # setting the display options
 manufactuer_var.set(manufacturer_options[0])
@@ -246,8 +253,7 @@ def submit():
         'enginesize', 'fuelsystem', 'boreratio', 'stroke', 'compressionratio',
         'horsepower', 'peakrpm', 'citympg', 'highwaympg', 'price'
     ]
-    # from prediction import preprocessing_data
-    # preprocessing_data(data)
+    get_prediction(5)
     print(df_data)
     return df_data
 
@@ -266,13 +272,18 @@ def reset():
     fuelSystem_var.set("")
 
 
-def get_prediction():
-    pass
+def get_prediction(prediciton):
+    prediciton_result = ttk.Label(frame2,
+                                  text=f"prediction result:{prediciton}",
+                                  font=("Helvetica", 14),
+                                  background='#F3EFE0',
+                                  padding=15,
+                                  foreground="#3C2A21").grid(row=0, column=0)
 
 
 sub_btn = ttk.Button(frame1, text='submit featuers',
-                     command=submit).grid(row=11, column=1)
-sub_btn = ttk.Button(frame1, text='Reset', command=reset).grid(row=11,
+                     command=submit).grid(row=12, column=1)
+sub_btn = ttk.Button(frame1, text='Reset', command=reset).grid(row=12,
                                                                column=0)
 
 window.mainloop()
