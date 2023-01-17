@@ -21,7 +21,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-import gui_v4
+import gui_v5
 
 # # get input from user
 # input_data = gui.submit()
@@ -141,26 +141,10 @@ history = model.fit(x=X_train,
                     epochs=100,
                     validation_data=(X_test, y_test),
                     verbose=0)
-
-# plt.plot(history.history['loss'], label="train_loss")
-# plt.plot(history.history['val_loss'], label="val_loss")
-# plt.legend()
-# plt.show()
-
-# PREDICT_ROW = 5
-# predict_data = main_array[PREDICT_ROW, :].reshape(1, -1)
-# X_predict = predict_data[:, :-1]
-# y_true = predict_data[:, -1]
-# predict_data_scaled = xScaler.transform(X_predict)
-# y_pred_scaled = model.predict(predict_data_scaled)
-# y_pred = yScaler.inverse_transform(y_pred_scaled)
-# print("Prediction price result: {}".format(float(y_pred)))
-# print("True price: {}".format(float(y_true)))
-# print("Percentage error: {}".format(str(float(abs(y_true - y_pred) * 100 / y_true))))
 """#----------------------------------------------------------------------------------------------------------"""
 
 # get input from user
-df = gui_v4.submit()
+df = gui_v5.submit()
 
 data2 = pd.read_csv(
     "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
