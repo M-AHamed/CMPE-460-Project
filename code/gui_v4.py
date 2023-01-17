@@ -225,7 +225,6 @@ def reset():
     fuelSystem_var.set("")
 
 
-
 def get_prediction():
     pass
 

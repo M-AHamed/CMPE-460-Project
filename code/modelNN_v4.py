@@ -141,10 +141,11 @@ history = model.fit(x=X_train,
                     epochs=100,
                     validation_data=(X_test, y_test),
                     verbose=0)
+
 """#----------------------------------------------------------------------------------------------------------"""
 
 # get input from user
-df = gui_v5.submit()
+df = gui_v4.submit()
 
 data2 = pd.read_csv(
     "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",

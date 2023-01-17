@@ -2,13 +2,19 @@ import tkinter as tk
 from tkinter import ttk
 import pandas as pd
 import numpy as np
-#from NeuralNetwork1 import predict_price_two_caller
+import pandas as pd
+import tensorflow as tf
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+import h5py
+from joblib import load
+
 # window attributes
 window = tk.Tk()
 window.title("PriceMatch")
 window.configure(background="#F3EFE0")
-
-# styling attributse:
+# styling of the widgets on the gui, and the frame:
 s = ttk.Style()
 s.configure('frame1.TFrame', background='#F5EDCE')
 s.configure("TLabel",
@@ -41,7 +47,7 @@ frame2.grid(row=1, column=0)
 guiData1 = pd.read_csv(
     "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
     encoding='iso-8859-1')
-
+# the manufacturer and model file
 guiData = pd.read_csv(
     "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
     encoding='iso-8859-1')
@@ -102,13 +108,14 @@ engineLocation_var = tk.StringVar()
 fuelSystem_var = tk.StringVar()
 
 # data labels
-# Header of the gui
+# Title fo the gui
 title = ttk.Label(frame1,
                   text="Car Price Predictor",
                   font=("Helvetica", 14),
                   background='#F3EFE0',
                   padding=15,
                   foreground="#3C2A21").grid(row=0, column=0, columnspan=2)
+# labels on the left side of the gui
 manufacturer = ttk.Label(frame1, text="car manufacturer").grid(row=1, column=0)
 catagory = ttk.Label(frame1, text="catagory").grid(row=3, column=0)
 fuel_type = ttk.Label(frame1, text="fuel type").grid(row=4, column=0)
@@ -131,9 +138,8 @@ prdictionResult = ttk.Label(frame2,
                                                        column=0,
                                                        columnspan=1)
 
-# setting the display options
+# setting the display options for each dropDown
 manufactuer_var.set(manufacturer_options[0])
-
 catagory_var.set(catagory_options[0])
 driveWheels_var.set(driveWheels_options[0])
 fuel_type_var.set(fuel_type_options[0])
@@ -143,14 +149,17 @@ aspiration_var.set(engine_aspiration_options[0])
 engineType_var.set(engine_type_options[0])
 engineLocation_var.set(engineLocation_options[0])
 fuelSystem_var.set(engineFuelSystem_options[0])
-# function to set the data displayed in the models feild based on
-# the uesr input in the manufacturer feild
-# model entry and label
+
+# Data entry and dataLabel.
+# in order for the window to render at the correct size
+# the values are changed inside the on_manufacturer select
 model_entry = ttk.OptionMenu(frame1, model_var, "input a manufacturer",
                              "input a manufacturer").grid(row=2, column=1)
 model = ttk.Label(frame1, text="Model ").grid(row=2, column=0)
 
 
+# takes in an event, when the user selects a certain manufacturer
+# displays the models assosiated with each manufacturer only
 def on_manufacturer_select(event):
     selected_manufacturer = manufactuer_var.get()
     models = guiData[guiData['Manufacturer'] ==
@@ -161,8 +170,12 @@ def on_manufacturer_select(event):
     model = ttk.Label(frame1, text="Model ").grid(row=2, column=0)
 
 
-# data entry forms
+# data entry optionMenus
+# each option menu takes a frame, a variable to display at the top
+# and an array of things to display
 
+# manufacturer dropDown calls the on_manufacturer_select
+# this influences the output of the model_dropDown
 manufacturer_dropDown = ttk.OptionMenu(frame1,
                                        manufactuer_var,
                                        *manufacturer_options,
@@ -199,11 +212,9 @@ engineLocation = ttk.OptionMenu(
 fuelSystem = ttk.OptionMenu(frame1, fuelSystem_var,
                             *engineFuelSystem_options).grid(row=11, column=1)
 
-# function to define the contentes of the model feild
 
-# submit function, takes data from the vars and saves them to variables
-
-
+# function that takes the variables from the gui
+# user inputs and converts it into a dataframe
 def submit():
     manufacturer_data = manufactuer_var.get()
     model_data = model_var.get()
@@ -237,6 +248,8 @@ def submit():
     highway_mpg = 30.7
     price = 13347.2
 
+    # variables gathered from the user and from the averages
+    # stored in a list
     list = [[car_id], [symboling], [fuel_type_data], [aspiration_data],
             [doorsNumber_data], [catagory_data], [driveWheels_data],
             [engine_location], [wheel_base], [car_length], [car_width],
@@ -244,7 +257,8 @@ def submit():
             [engine_size], [fuel_system], [bore_ratio], [stroke],
             [compression], [horesepower], [peakrpm], [citympg], [highway_mpg],
             [price]]
-
+    # dataframe with both names of coulmns and the values
+    # consists of one row and 25 coloumns
     df_data = pd.DataFrame(list).transpose()
     df_data.columns = [
         'car_ID', 'symboling', 'Fuel type', 'aspiration', 'doornumber',
@@ -253,11 +267,16 @@ def submit():
         'enginesize', 'fuelsystem', 'boreratio', 'stroke', 'compressionratio',
         'horsepower', 'peakrpm', 'citympg', 'highwaympg', 'price'
     ]
+
+    # passing the reutned prediciton to the get prediciton funciton
+    predict(df_data)
     get_prediction(5)
     print(df_data)
-    return df_data
+    # returning the dataframe
 
 
+# function to reset the dropDown menus
+# by resetting the variables
 def reset():
     manufactuer_var.set("")
     model_var.set("")
@@ -272,6 +291,7 @@ def reset():
     fuelSystem_var.set("")
 
 
+#Get the prediction value, and display it in a label
 def get_prediction(prediciton):
     prediciton_result = ttk.Label(frame2,
                                   text=f"prediction result:{prediciton}",
@@ -281,9 +301,80 @@ def get_prediction(prediciton):
                                   foreground="#3C2A21").grid(row=0, column=0)
 
 
+# function to process the data coming in from the user
+# and run through the prediction
+def predict(df):
+    loaded_model = tf.keras.models.load_model('my_model.h5')
+    xScaler = load("xScaler.pkl")
+    yScaler = load("yScaler.pkl")
+
+    data2 = pd.read_csv(
+        "C:\\Users\\hp\\Desktop\\University\\CMPE 460\\Project_deep\\cars.csv",
+        encoding='iso-8859-1')
+
+    data2 = data2[data2['price'] >= 500]
+
+    if 'Manufacturer' in data2.columns:
+        data2 = data2.drop('Manufacturer', axis=1)
+    else:
+        print("Manufacturer column not found")
+
+    if 'Model ' in data2.columns:
+        data2 = data2.drop('Model ', axis=1)
+    else:
+        print("Model  column not found")
+
+    data2 = data2[:-1]
+    data2 = data2.append(
+        df)  # df is the input from the user which is coming from the gui file
+
+    categorical_cols = [
+        'symboling', 'Fuel type', 'aspiration', 'doornumber', 'Category',
+        'Drive wheels', 'enginelocation', 'enginetype', 'Cylinders',
+        'fuelsystem'
+    ]
+    # Create the main array with car_ID column
+    main_array1 = np.array(data2['car_ID']).reshape(-1, 1)
+
+    # Iterate through columns in the dataframe
+    for col in data2.columns:
+        # Check if the column is in the list of categorical columns
+        if col in categorical_cols:
+            # Perform one-hot encoding on the column
+            temp = np.array(pd.get_dummies(data2[col]))
+        else:
+            # Otherwise, reshape the column
+            temp = np.array(data2[col]).reshape(-1, 1)
+        # Stack the column with the main array
+        main_array1 = np.hstack((main_array1, temp))
+
+    # Remove the car_ID column
+    main_array1 = main_array1[:, 2:]
+
+    main_array1 = pd.DataFrame(main_array1)
+    main_array1 = main_array1.astype(float)
+
+    # Get the input data from the user
+    user_data = main_array1[202, :].reshape(1, -1)
+
+    X_predict = user_data[:, :-1]
+    # y_predict = user_data[:, -1]
+
+    # Preprocess the input data using the same scaler that was used for the training data
+    input_data_xscaled = xScaler.transform(X_predict)
+
+    # Make predictions using the loaded model
+    x_prediction = loaded_model.predict(input_data_xscaled)
+
+    # Rescale the prediction
+    prediction = yScaler.inverse_transform(x_prediction)
+
+    print("Prediction price result: {}".format(float(prediction)))
+    get_prediction(prediction)
+
+
 sub_btn = ttk.Button(frame1, text='submit featuers',
                      command=submit).grid(row=12, column=1)
 sub_btn = ttk.Button(frame1, text='Reset', command=reset).grid(row=12,
                                                                column=0)
-
 window.mainloop()
