@@ -7,9 +7,10 @@ import numpy as np
 # window attributes
 window = Tk()
 window.title("PriceMatch")
-window.geometry('320x360')
-
+window.geometry('640x720')
 window.configure(background="#5A5A5A")
+window.grid()
+# styling:
 guiData1 = pd.read_csv(
     "C:\\Users\\Mohammad\\Desktop\\Uni\\Uni work\\Year 4\\Term 7, fall 2022\\CMPE 460 Deep Learning\\project\\CMPE-460-Project\\dataset\\cars.csv",
     encoding='iso-8859-1')
@@ -34,7 +35,8 @@ guiData1DoorsNumber = guiData1.drop_duplicates(subset=['doornumber'])
 guiData1NumberOfCylinders = guiData1.drop_duplicates(subset=['Cylinders'])
 guiData1Aspiration = guiData1.drop_duplicates(subset=['aspiration'])
 guiData1EngineType = guiData1.drop_duplicates(subset=['enginetype'])
-
+guiData1EngineLocation = guiData1.drop_duplicates(subset=['enginelocation'])
+guiData1FuelSystem = guiData1.drop_duplicates(subset=['fuelsystem'])
 catagory_options = guiData1Category['Category']
 catagory_var = catagory_options[0]
 # list for different drive wheels options Drive wheels
@@ -57,7 +59,8 @@ engine_aspiration_options = guiData1Aspiration['aspiration']
 
 # list of possible engine types
 engine_type_options = guiData1EngineType['enginetype']
-
+engineLocation_options = guiData1EngineLocation['enginelocation']
+engineFuelSystem_options = guiData1FuelSystem['fuelsystem']
 # the string vars that are used to save data from the form
 aspiration_var = StringVar()
 manufactuer_var = StringVar()
@@ -69,8 +72,11 @@ cylinders_var = StringVar()
 driveWheels_var = StringVar()
 doorsNumber_var = StringVar()
 engineType_var = StringVar()
+engineLocation_var = StringVar()
+fuelSystem_var = StringVar()
 
 # data labels
+titl1 = Label(window, text="Car Price Predictor").grid(row=0, column=6)
 manufacturer = Label(window, text="car manufacturer").grid(row=0, column=0)
 
 catagory = Label(window, text="catagory").grid(row=3, column=0)
@@ -82,8 +88,15 @@ doorsNumber = Label(window, text="number of doors").grid(row=10, column=0)
 engineAspiration = Label(window, text="enigne aspiration").grid(row=11,
                                                                 column=0)
 engineType = Label(window, text="engine type").grid(row=12, column=0)
+engineLocation = Label(window, text="engine Location").grid(row=13, column=0)
+fuelSystem = Label(window, text="Fuel System").grid(row=14, column=0)
+# prediction result:
+prdictionResult = Label(window, text="prediction result:").grid(row=16,
+                                                                column=0)
+
 # setting the display options
 manufactuer_var.set(manufacturer_options[0])
+
 catagory_var.set(catagory_options[0])
 driveWheels_var.set(driveWheels_options[0])
 fuel_type_var.set(fuel_type_options[0])
@@ -91,6 +104,8 @@ doorsNumber_var.set(doorsNumber_options[0])
 cylinders_var.set(cylinders_options[0])
 aspiration_var.set(engine_aspiration_options[0])
 engineType_var.set(engine_type_options[0])
+engineLocation_var.set(engineLocation_options[0])
+fuelSystem_var.set(engineFuelSystem_options[0])
 # function to set the data displayed in the models feild based on
 # the uesr input in the manufacturer feild
 
@@ -126,11 +141,17 @@ driveWheels_entry = OptionMenu(window, driveWheels_var,
 doorsNumber = OptionMenu(window, doorsNumber_var,
                          *doorsNumber_options).grid(row=10, column=1)
 
-doorsNumber = OptionMenu(window, aspiration_var,
-                         *engine_aspiration_options).grid(row=11, column=1)
+engineAspiration = OptionMenu(window, aspiration_var,
+                              *engine_aspiration_options).grid(row=11,
+                                                               column=1)
 
-doorsNumber = OptionMenu(window, engineType_var,
-                         *engine_type_options).grid(row=12, column=1)
+engineType = OptionMenu(window, engineType_var,
+                        *engine_type_options).grid(row=12, column=1)
+
+engineLocation = OptionMenu(window, engineLocation_var,
+                            *engineLocation_options).grid(row=13, column=1)
+fuelSystem = OptionMenu(window, fuelSystem_var,
+                        *engineFuelSystem_options).grid(row=14, column=1)
 
 # function to define the contentes of the model feild
 
@@ -147,17 +168,18 @@ def submit():
     doorsNumber_data = doorsNumber_var.get()
     aspiration_data = aspiration_var.get()
     engine_type = engineType_var.get()
+    engine_location = engineLocation_var.get()
+    fuel_system = fuelSystem_var.get()
 
     car_id = 206
-    symboling = 3
-    engine_location = "front"
-    wheel_base = 103.1
-    car_length = 192.7
-    car_width = 64.5
-    car_height = 48.8
-    car_weight = 2500
+    symboling = 0.85
+
+    wheel_base = 98.789
+    car_length = 174.14
+    car_width = 65.9
+    car_height = 53.7
+    car_weight = 2560
     engine_size = 110
-    fuel_system = "mpfi"
     bore_ratio = 2.68
     stroke = 3.4
     compression = 8.6
@@ -199,10 +221,17 @@ def reset():
     doorsNumber_var.set("")
     engineType_var.set("")
     aspiration_var.set("")
+    engineLocation_var.set("")
+    fuelSystem_var.set("")
 
 
-sub_btn = Button(window, text='submit featuers', command=submit).grid(row=14,
+
+def get_prediction():
+    pass
+
+
+sub_btn = Button(window, text='submit featuers', command=submit).grid(row=15,
                                                                       column=1)
-sub_btn = Button(window, text='Reset', command=reset).grid(row=14, column=0)
+sub_btn = Button(window, text='Reset', command=reset).grid(row=15, column=0)
 
 window.mainloop()

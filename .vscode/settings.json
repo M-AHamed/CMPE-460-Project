@@ -3,6 +3,10 @@
     {
       "path": "c:\\Python39\\python.exe",
       "type": "pythonEnvironment"
+    },
+    {
+      "path": "C:\\Users\\Mohammad\\miniconda3\\Scripts\\conda.exe",
+      "type": "pythonEnvironment"
     }
   ],
   "python.formatting.provider": "yapf"
