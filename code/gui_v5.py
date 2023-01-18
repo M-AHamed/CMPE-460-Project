@@ -1,15 +1,20 @@
 import tkinter as tk
 from tkinter import ttk
 import pandas as pd
-import numpy as np
-import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.optimizers import Adam
+from keras import backend as K
 import tensorflow as tf
 import numpy as np
-from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 import h5py
-from joblib import load
 
+from joblib import load
+from tkinter import *
 # window attributes
 window = tk.Tk()
 window.title("PriceMatch")
@@ -94,18 +99,18 @@ engine_type_options = guiData1EngineType['enginetype']
 engineLocation_options = guiData1EngineLocation['enginelocation']
 engineFuelSystem_options = guiData1FuelSystem['fuelsystem']
 # the string vars that are used to save data from the form
-aspiration_var = tk.StringVar()
-manufactuer_var = tk.StringVar()
-model_var = tk.StringVar()
-catagory_var = tk.StringVar()
-Leather_interior_var = tk.StringVar()
-fuel_type_var = tk.StringVar()
-cylinders_var = tk.StringVar()
-driveWheels_var = tk.StringVar()
-doorsNumber_var = tk.StringVar()
-engineType_var = tk.StringVar()
-engineLocation_var = tk.StringVar()
-fuelSystem_var = tk.StringVar()
+aspiration_var = StringVar()
+manufactuer_var = StringVar()
+model_var = StringVar()
+catagory_var = StringVar()
+Leather_interior_var = StringVar()
+fuel_type_var = StringVar()
+cylinders_var = StringVar()
+driveWheels_var = StringVar()
+doorsNumber_var = StringVar()
+engineType_var = StringVar()
+engineLocation_var = StringVar()
+fuelSystem_var = StringVar()
 
 # data labels
 # Title fo the gui
@@ -174,6 +179,9 @@ def on_manufacturer_select(event):
 # each option menu takes a frame, a variable to display at the top
 # and an array of things to display
 
+# bug fix: function to resit the element displayed to the user
+# after the selection has been made:
+
 # manufacturer dropDown calls the on_manufacturer_select
 # this influences the output of the model_dropDown
 manufacturer_dropDown = ttk.OptionMenu(frame1,
@@ -181,34 +189,23 @@ manufacturer_dropDown = ttk.OptionMenu(frame1,
                                        *manufacturer_options,
                                        command=on_manufacturer_select).grid(
                                            row=1, column=1)
-
 catagory_dropDown = ttk.OptionMenu(frame1, catagory_var,
                                    *catagory_options).grid(row=3, column=1)
-
 fuel_type_entry = ttk.OptionMenu(frame1, fuel_type_var,
                                  *fuel_type_options).grid(row=4, column=1)
-
 cylinders_entry = ttk.OptionMenu(frame1, cylinders_var,
                                  *cylinders_options).grid(row=5, column=1)
-
 driveWheels_entry = ttk.OptionMenu(frame1, driveWheels_var,
                                    *driveWheels_options).grid(row=6, column=1)
-
 doorsNumber = ttk.OptionMenu(frame1, doorsNumber_var,
                              *doorsNumber_options).grid(row=7, column=1)
-
 engineAspiration = ttk.OptionMenu(frame1, aspiration_var,
                                   *engine_aspiration_options).grid(row=8,
                                                                    column=1)
-
 engineType = ttk.OptionMenu(frame1, engineType_var,
                             *engine_type_options).grid(row=9, column=1)
-
-engineLocation = ttk.OptionMenu(
-    frame1,
-    engineLocation_var,
-    *engineLocation_options,
-).grid(row=10, column=1)
+engineLocation = ttk.OptionMenu(frame1, engineLocation_var,
+                                *engineLocation_options).grid(row=10, column=1)
 fuelSystem = ttk.OptionMenu(frame1, fuelSystem_var,
                             *engineFuelSystem_options).grid(row=11, column=1)
 
@@ -278,17 +275,17 @@ def submit():
 # function to reset the dropDown menus
 # by resetting the variables
 def reset():
-    manufactuer_var.set("")
-    model_var.set("")
-    catagory_var.set("")
-    fuel_type_var.set("")
-    cylinders_var.set("")
-    driveWheels_var.set("")
-    doorsNumber_var.set("")
-    engineType_var.set("")
-    aspiration_var.set("")
-    engineLocation_var.set("")
-    fuelSystem_var.set("")
+    manufactuer_var.set(manufacturer_options[0])
+    model_var.set("input a manufacturer")
+    catagory_var.set(catagory_options[0])
+    driveWheels_var.set(driveWheels_options[0])
+    fuel_type_var.set(fuel_type_options[0])
+    doorsNumber_var.set(doorsNumber_options[0])
+    cylinders_var.set(cylinders_options[0])
+    aspiration_var.set(engine_aspiration_options[0])
+    engineType_var.set(engine_type_options[0])
+    engineLocation_var.set(engineLocation_options[0])
+    fuelSystem_var.set(engineFuelSystem_options[0])
 
 
 #Get the prediction value, and display it in a label

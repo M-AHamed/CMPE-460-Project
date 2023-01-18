@@ -137,10 +137,10 @@ cylinders_entry = OptionMenu(window, cylinders_var,
 
 driveWheels_entry = OptionMenu(window, driveWheels_var,
                                *driveWheels_options).grid(row=9, column=1)
-
+print(doorsNumber_options)
 doorsNumber = OptionMenu(window, doorsNumber_var,
                          *doorsNumber_options).grid(row=10, column=1)
-
+print(doorsNumber_options)
 engineAspiration = OptionMenu(window, aspiration_var,
                               *engine_aspiration_options).grid(row=11,
                                                                column=1)
